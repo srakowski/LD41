@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LD41", "LD41\LD41.csproj", "{8D164926-DBA1-4C42-8190-B6EEB0DF0EF9}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LD41.Raycasting", "LD41.Raycasting\LD41.Raycasting.shproj", "{CC3E70DF-5351-453D-AF0C-10A4239A59DC}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		LD41.Raycasting\LD41.Raycasting.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
+		LD41.Raycasting\LD41.Raycasting.projitems*{cc3e70df-5351-453d-af0c-10a4239a59dc}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D164926-DBA1-4C42-8190-B6EEB0DF0EF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D164926-DBA1-4C42-8190-B6EEB0DF0EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D164926-DBA1-4C42-8190-B6EEB0DF0EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D164926-DBA1-4C42-8190-B6EEB0DF0EF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {119DCA5F-5575-4114-B32E-4D34D8FDA707}
+	EndGlobalSection
+EndGlobal
