@@ -38,19 +38,15 @@ namespace LD41
         /// </summary>
         protected override void Initialize()
         {
-            map = new int[11, 5]
+            map = new int[7, 5]
             {
-                { 2, 2, 4, 2, 2 },
+                { 5, 2, 4, 2, 5 },
+                { 2, 2, 0, 2, 5 },
+                { 2, 0, 0, 0, 2 },
                 { 5, 0, 0, 0, 5 },
-                { 5, 0, 0, 0, 5 },
-                { 5, 0, 0, 0, 5 },
-                { 5, 0, 0, 0, 5 },
-                { 5, 0, 0, 0, 5 },
+                { 2, 0, 0, 0, 2 },
                 { 2, 2, 0, 2, 2 },
-                { 2, 0, 0, 0, 2 },
-                { 2, 0, 0, 0, 2 },
-                { 2, 0, 0, 0, 2 },
-                { 2, 2, 2, 2, 2 },
+                { 0, 2, 3, 2, 0 },
             };
 
             // TODO: Add your initialization logic here
@@ -106,6 +102,7 @@ namespace LD41
             var comp = Content.Load<Texture2D>("comp");
             var window = Content.Load<Texture2D>("window");
             var ceiling = Content.Load<Texture2D>("ceiling");
+            var column = Content.Load<Texture2D>("column");
             textures = new Texture2D[]
             {
                 floor,
@@ -114,6 +111,7 @@ namespace LD41
                 comp,
                 window,
                 ceiling,
+                column,
             };
         }
 
@@ -156,19 +154,19 @@ namespace LD41
             var newPos = pos;
             if (kb.IsKeyDown(Keys.Up))
             {
-                newPos += look * delta;
+                newPos += look * (0.3f * delta);
             }
             if (kb.IsKeyDown(Keys.Down))
             {
-                newPos -= look * delta;
+                newPos -= look * (0.3f * delta);
             }
             if (kb.IsKeyDown(Keys.Left) && kb.IsKeyDown(Keys.RightAlt))
             {
-                newPos += (new Vector2(-look.Y, look.X) * delta);
+                newPos += (new Vector2(-look.Y, look.X) * (0.3f * delta));
             }
             if (kb.IsKeyDown(Keys.Right) && kb.IsKeyDown(Keys.RightAlt))
             {
-                newPos -= (new Vector2(-look.Y, look.X) * delta);
+                newPos -= (new Vector2(-look.Y, look.X) * (0.3f * delta));
             }
 
             var dv = pos - newPos;
@@ -202,7 +200,8 @@ namespace LD41
                 pos,
                 look,
                 fov,
-                textures);
+                textures,
+                new Vector2(3, 9));
 
             target.SetData(data);
 

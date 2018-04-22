@@ -7,8 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LD41", "LD41\LD41.csproj", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LD41.Raycasting", "LD41.Raycasting\LD41.Raycasting.shproj", "{CC3E70DF-5351-453D-AF0C-10A4239A59DC}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LD41.Gameplay", "LD41.Gameplay\LD41.Gameplay.shproj", "{098FB9FA-7B61-40D8-BB6C-5B5F4BEC4F71}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		LD41.Gameplay\LD41.Gameplay.projitems*{098fb9fa-7b61-40d8-bb6c-5b5f4bec4f71}*SharedItemsImports = 13
+		LD41.Gameplay\LD41.Gameplay.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
 		LD41.Raycasting\LD41.Raycasting.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
 		LD41.Raycasting\LD41.Raycasting.projitems*{cc3e70df-5351-453d-af0c-10a4239a59dc}*SharedItemsImports = 13
 	EndGlobalSection
