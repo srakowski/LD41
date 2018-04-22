@@ -8,19 +8,21 @@
             public abstract string CeilingTextureName { get; }
         }
         public class Threshold : Cell { }
+        public interface ComputerCell { }
 
         public class ShipVoid : VoidCell
         {
             public override string TextureName => "ShipFloor";
             public override string CeilingTextureName => "ShipCeiling";
         }
+        public class ShipExitVoid : ShipVoid { }
         public class ShipWall : Cell { }
         public class ShipWindow : Cell
         {
             public ShipWindow(bool isLeft) => IsLeftSide = isLeft;
             public bool IsLeftSide { get; }
         }
-        public class ShipComputer : Cell { }
+        public class ShipComputer : Cell, ComputerCell { }
         public class ShipSystem : Cell { }
         public class ShipExit : Cell { }
 
@@ -30,8 +32,10 @@
             public override string CeilingTextureName => "AsteroidCeiling";
         }
         public class AsteroidEntry : Cell { }
-        public class AsteroidRock : Cell { }
-        public class AsteroidResource : Cell { }
+        public class AsteroidEntryVoid : AsteroidVoid { }
+        public class AsteroidMineableCell : Cell { }
+        public class AsteroidRock : AsteroidMineableCell { }
+        public class AsteroidResource : AsteroidMineableCell { }
         public class AsteroidBoundary : Cell { }
 
         public interface StationCell { }
@@ -40,8 +44,9 @@
             public override string TextureName => "StationFloor";
             public override string CeilingTextureName => "StationCeiling";
         }
+        public class StationEntryVoid : StationVoid { }
         public class StationWall : Cell { }
-        public class StationComputer : Cell { }
+        public class StationComputer : Cell, ComputerCell { }
         public class StationEntry : Cell { }
         public class StationBaySign : Cell
         {
@@ -49,7 +54,7 @@
             public int Num { get; }
         }
 
-        public static Cell Get(char charCode)
+        public static Cell Create(char charCode)
         {
             switch (charCode)
             {

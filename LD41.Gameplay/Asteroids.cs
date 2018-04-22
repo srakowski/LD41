@@ -1,8 +1,8 @@
 ﻿namespace LD41.Gameplay
 {
-    class Asteroids
+    class Asteroid : IEnvironment
     {
-        public static readonly char[,] Test = new char[12, 9]
+        private static readonly char[,] layout = new char[12, 9]
         {
             {'!','!','!',':','-',':','!','!','!' },
             {'!','!','!','!',',','!','!','!','!' },
@@ -17,5 +17,23 @@
             {'!','!','!','R','R','R','!','!','!' },
             {'!','!','!','!','!','!','!','!','!' },
         };
+
+        private Layout _currLayout;
+
+        public Asteroid()
+        {
+            _currLayout = Layout.FromChars(layout);
+        }
+
+        internal Layout GetLayout() => _currLayout;
+
+
+        public GameState GameState { get; set; }
+
+        public void Mine(Cell.AsteroidMineableCell cell)
+        {
+            _currLayout.Replace(cell, new Cell.AsteroidVoid());
+            GameState.Map.SetEnvLayout(this._currLayout);
+        }
     }
 }

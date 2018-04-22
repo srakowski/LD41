@@ -105,6 +105,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.manifest" />
+    <None Include="Content\HudFont.spritefont" />
   </ItemGroup>
   <Import Project="..\LD41.Raycasting\LD41.Raycasting.projitems" Label="Shared" />
   <Import Project="..\LD41.Gameplay\LD41.Gameplay.projitems" Label="Shared" />

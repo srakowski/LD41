@@ -5,16 +5,87 @@ using System.Collections.Generic;
 
 namespace LD41.Raycasting
 {
+    class RaycasterTarget
+    {
+        public RaycasterTarget(Cell cell, double distance)
+        {
+            Cell = cell;
+            Distance = distance;
+        }
+        public Cell Cell { get; }
+        public double Distance { get; }
+    }
+
     static class Raycaster
     {
+        public static RaycasterTarget GetTarget(Map map,
+            Point screenDim,
+            Player player)
+        {
+            Vector2 position = player.Position;
+            Vector2 direction = player.Look;
+            Vector2 plane = player.Fov;
+
+            var x = screenDim.X / 2;
+            var cameraX = (2 * (x / (float)screenDim.X)) - 1; // where on the plane -1 to 1
+            var rayDirection = direction + (plane * cameraX);
+            var mapPos = position.ToPoint();
+
+            var sideDist = Vector2.Zero;
+
+            var deltaDist = Vector2.One;
+            deltaDist.X /= Math.Abs(rayDirection.X);
+            deltaDist.Y /= Math.Abs(rayDirection.Y);
+
+            var step = Point.Zero;
+
+            step.X = rayDirection.X < 0 ? -1 : 1;
+            sideDist.X = rayDirection.X < 0
+                ? (position.X - mapPos.X) * deltaDist.X
+                : (mapPos.X + 1f - position.X) * deltaDist.X;
+
+            step.Y = rayDirection.Y < 0 ? -1 : 1;
+            sideDist.Y = rayDirection.Y < 0
+                ? (position.Y - mapPos.Y) * deltaDist.Y
+                : (mapPos.Y + 1f - position.Y) * deltaDist.Y;
+
+            var yWallHit = false;
+            while (true)
+            {
+                if (sideDist.X < sideDist.Y)
+                {
+                    sideDist.X += deltaDist.X;
+                    mapPos.X += step.X;
+                    yWallHit = false;
+                }
+                else
+                {
+                    sideDist.Y += deltaDist.Y;
+                    mapPos.Y += step.Y;
+                    yWallHit = true;
+                }
+
+                if (!(map[mapPos.X, mapPos.Y] is Cell.VoidCell))
+                    break;
+            }
+
+            var perpWallDist = 0.0;
+            if (!yWallHit) perpWallDist = (mapPos.X - position.X + (1 - step.X) / 2) / rayDirection.X;
+            else perpWallDist = (mapPos.Y - position.Y + (1 - step.Y) / 2) / rayDirection.Y;
+
+            return new RaycasterTarget(map[mapPos.X, mapPos.Y], perpWallDist);
+        }
+
         public static Color[] Raycast(
             Map map,
             Point screenDim,
-            Vector2 position,
-            Vector2 direction,
-            Vector2 plane,
+            Player player,
             Dictionary<string, TextureData> textures)
         {
+            Vector2 position = player.Position;
+            Vector2 direction = player.Look;
+            Vector2 plane = player.Fov;
+
             var buffer = new Color[screenDim.Y, screenDim.X];
             //double[] zbuffer = new double[screenDim.X];
             for (int x = 0; x < screenDim.X; x++)

@@ -1,17 +1,26 @@
-﻿namespace LD41.Gameplay
+﻿using System;
+
+namespace LD41.Gameplay
 {
     class Map
     {
         private Cell[,] _cells;
 
-        public Map(char[,] cells)
+        private Layout _shipLayout;
+
+        private Layout _envLayout;
+
+        public Map(Layout shipLayout, Layout envLayout)
         {
-            Height = cells.GetLength(0);
-            Width = cells.GetLength(1);
+            Height = 200;
+            Width = 100;
             _cells = new Cell[Height, Width];
             for (int y = 0; y < Height; y++)
                 for (int x = 0; x < Width; x++)
-                    _cells[y, x] = Cell.Get(cells[y, x]);
+                    _cells[y, x] = new Cell.None();
+
+            SetShipLayout(shipLayout);
+            SetEnvLayout(envLayout);
         }
 
         public int Width { get; }
@@ -22,5 +31,75 @@
             (x < 0 || x >= Width || y < 0 || y >= Height)
                 ? Cell.Default
                 : _cells[y, x];
+
+        public void SetShipLayout(Layout shipLayout)
+        {
+            _shipLayout = shipLayout;
+            var destMidY = Height / 2;
+            var destMidX = Width / 2;
+            for (int y = 0; y < destMidY; y++)
+                for (int x = 0; x < Width; x++)
+                    _cells[y, x] = new Cell.None();
+
+            if (_shipLayout == null)
+            {
+                if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.StationEntry)
+                    _cells[destMidY, destMidX + 1] = new Cell.StationEntryVoid();
+                else if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.AsteroidEntry)
+                    _cells[destMidY, destMidX + 1] = new Cell.AsteroidEntryVoid();
+
+                return;
+            }
+
+            var destY = destMidY - shipLayout.Height;
+            var destX = destMidX - shipLayout.Width / 2;
+            for (int y = 0; y < shipLayout.Height; y++)
+                for (int x = 0; x < shipLayout.Width; x++)
+                {
+                    var cell = shipLayout[x, y];
+                    if (_envLayout != null && cell is Cell.ShipExit)
+                        cell = new Cell.ShipExitVoid();
+                    _cells[destY + y, destX + x] = cell;
+                }
+
+            if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.StationEntryVoid)
+                _cells[destMidY, destMidX + 1] = new Cell.StationEntry();
+            if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.AsteroidEntryVoid)
+                _cells[destMidY, destMidX + 1] = new Cell.AsteroidEntry();
+        }
+
+        public void SetEnvLayout(Layout envLayout)
+        {
+            _envLayout = envLayout;
+            var destMidY = Height / 2;
+            var destMidX = Width / 2;
+            for (int y = destMidY; y < Height; y++)
+                for (int x = 0; x < Width; x++)
+                    _cells[y, x] = new Cell.None();
+
+            if (_envLayout == null)
+            {
+                if (_envLayout != null && _cells[destMidY - 1, destMidX] is Cell.ShipExit)
+                    _cells[destMidY - 1, destMidX] = new Cell.ShipExitVoid();
+
+                return;
+            }
+
+            var destY = destMidY;
+            var destX = destMidX - envLayout.Width / 2;
+            for (int y = 0; y < envLayout.Height; y++)
+                for (int x = 0; x < envLayout.Width; x++)
+                {
+                    var cell = envLayout[x, y];
+                    if (_envLayout != null && cell is Cell.StationEntry)
+                        cell = new Cell.StationEntryVoid();
+                    if (_envLayout != null && cell is Cell.AsteroidEntry)
+                        cell = new Cell.AsteroidEntryVoid();
+                    _cells[destY + y, destX + x] = cell;
+                }
+
+            if (_envLayout != null && _cells[destMidY - 1, destMidX + 1] is Cell.ShipExitVoid)
+                _cells[destMidY - 1, destMidX + 1] = new Cell.ShipExit();
+        }
     }
 }

@@ -6,17 +6,34 @@ namespace LD41.Gameplay
 {
     class Computer
     {
-        public Computer(Display display, OperatingSystem os)
+        private OperatingSystem _os;
+
+        public Computer(Display display)
         {
             Display = display;
-            OS = os;
-            OS.Computer = this;
-            OS.Run();
         }
 
-        public OperatingSystem OS { get; }
+        public GameState GameState { get; set; }
+
+        public OperatingSystem OS
+        {
+            get => _os;
+            set
+            {
+                _os = value;
+                _os.Computer = this;
+                _os.Init();
+            }
+        }
 
         public Display Display { get; }
+
+        internal void Enter() => OS.Enter();
+
+        public void Update(float delta)
+        {
+            OS.Update(delta);
+        }
     }
 
     class Display
@@ -25,7 +42,6 @@ namespace LD41.Gameplay
         private Color[,] _pixels;
         private char[,] _charBuffer;
         private Point _cursorPos;
-        private Texture2D _fontTexture;
         private Color[] _fontData;
 
         public Display(Texture2D fontTexture)
@@ -36,11 +52,13 @@ namespace LD41.Gameplay
             Height = CharHeight * CHAR_DIM;
             _pixels = new Color[CharHeight * CHAR_DIM, CharWidth * CHAR_DIM];
             _charBuffer = new char[CharHeight, CharWidth];
-            _fontTexture = fontTexture;
-            _fontData = new Color[_fontTexture.Width * _fontTexture.Height];
-            _fontTexture.GetData(_fontData);
+            FontTexture = fontTexture;
+            _fontData = new Color[FontTexture.Width * FontTexture.Height];
+            FontTexture.GetData(_fontData);
             Clear();
         }
+
+        public Texture2D FontTexture { get; }
 
         public int Width { get; }
         public int Height { get; }
@@ -82,7 +100,7 @@ namespace LD41.Gameplay
                     int col = b % 16;
                     for (int rw = 0; rw < CHAR_DIM; rw++)
                     {
-                        var i = (((row * CHAR_DIM) + rw) * _fontTexture.Width);
+                        var i = (((row * CHAR_DIM) + rw) * FontTexture.Width);
                         for (int cl = 0; cl < CHAR_DIM; cl++)
                         {
                             var pixel = _fontData[i + ((col * 8) + cl)];
@@ -115,14 +133,13 @@ namespace LD41.Gameplay
             _cursorPos.Y %= CharHeight;
         }
 
-        internal void RenderTo(Texture2D compTarget)
+        internal Color[] Render()
         {
             var pixels = new Color[_pixels.Length];
             var p = 0;
             foreach (var color in _pixels)
                 pixels[p++] = color;
-
-            compTarget.SetData(pixels);
+            return pixels;
         }
     }
 }
