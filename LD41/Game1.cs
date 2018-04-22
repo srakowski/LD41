@@ -55,25 +55,25 @@ namespace LD41
             LoadTexture("ShipWall", "wall");
             LoadTexture("ShipWindow", "window");
             LoadTexture("ShipComputer");
-            LoadTexture("ShipExit", "todo");
+            LoadTexture("ShipExit");
+            LoadTexture("ShipSystem");
 
             LoadTexture("AsteroidFloor", "AsteroidBoundary");
             LoadTexture("AsteroidCeiling", "AsteroidBoundary");
             LoadTexture("AsteroidEntry", "todo");
             LoadTexture("AsteroidRock");
-            LoadTexture("AsteroidResource", "todo");
+            LoadTexture("AsteroidResource");
             LoadTexture("AsteroidBoundary");
 
-            LoadTexture("StationFloor", "todo");
-            LoadTexture("StationCeiling", "todo");
-            LoadTexture("StationWall", "todo");
+            LoadTexture("StationFloor");
+            LoadTexture("StationCeiling", "ceiling");
+            LoadTexture("StationWall");
             LoadTexture("StationComputer");
-            LoadTexture("ShipSystem", "todo");
-            LoadTexture("StationEntry", "todo");
-            LoadTexture("StationBaySign", "todo");
+            LoadTexture("StationEntry", "StationExit");
+            LoadTexture("StationBaySign");
 
             LoadTexture("None", "todo");
-            LoadTexture("Threshold", "todo");
+            LoadTexture("Threshold");
             LoadTexture("Crosshair", "crosshair");
             LoadTexture("font");
 

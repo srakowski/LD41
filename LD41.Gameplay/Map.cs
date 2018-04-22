@@ -43,10 +43,10 @@ namespace LD41.Gameplay
 
             if (_shipLayout == null)
             {
-                if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.StationEntry)
-                    _cells[destMidY, destMidX + 1] = new Cell.StationEntryVoid();
-                else if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.AsteroidEntry)
-                    _cells[destMidY, destMidX + 1] = new Cell.AsteroidEntryVoid();
+                if (_envLayout != null && _cells[destMidY, destMidX] is Cell.StationEntryVoid)
+                    _cells[destMidY, destMidX] = new Cell.StationEntry();
+                else if (_envLayout != null && _cells[destMidY, destMidX] is Cell.AsteroidEntryVoid)
+                    _cells[destMidY, destMidX] = new Cell.AsteroidEntry();
 
                 return;
             }
@@ -62,10 +62,10 @@ namespace LD41.Gameplay
                     _cells[destY + y, destX + x] = cell;
                 }
 
-            if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.StationEntryVoid)
-                _cells[destMidY, destMidX + 1] = new Cell.StationEntry();
-            if (_envLayout != null && _cells[destMidY, destMidX + 1] is Cell.AsteroidEntryVoid)
-                _cells[destMidY, destMidX + 1] = new Cell.AsteroidEntry();
+            if (_envLayout != null && _cells[destMidY, destMidX] is Cell.StationEntry)
+                _cells[destMidY, destMidX] = new Cell.StationEntryVoid();
+            if (_envLayout != null && _cells[destMidY, destMidX] is Cell.AsteroidEntry)
+                _cells[destMidY, destMidX] = new Cell.AsteroidEntryVoid();
         }
 
         public void SetEnvLayout(Layout envLayout)
@@ -79,8 +79,8 @@ namespace LD41.Gameplay
 
             if (_envLayout == null)
             {
-                if (_envLayout != null && _cells[destMidY - 1, destMidX] is Cell.ShipExit)
-                    _cells[destMidY - 1, destMidX] = new Cell.ShipExitVoid();
+                if (_shipLayout != null && _cells[destMidY - 1, destMidX] is Cell.ShipExitVoid)
+                    _cells[destMidY - 1, destMidX] = new Cell.ShipExit();
 
                 return;
             }
@@ -91,15 +91,15 @@ namespace LD41.Gameplay
                 for (int x = 0; x < envLayout.Width; x++)
                 {
                     var cell = envLayout[x, y];
-                    if (_envLayout != null && cell is Cell.StationEntry)
+                    if (_shipLayout != null && cell is Cell.StationEntry)
                         cell = new Cell.StationEntryVoid();
-                    if (_envLayout != null && cell is Cell.AsteroidEntry)
+                    if (_shipLayout != null && cell is Cell.AsteroidEntry)
                         cell = new Cell.AsteroidEntryVoid();
                     _cells[destY + y, destX + x] = cell;
                 }
 
-            if (_envLayout != null && _cells[destMidY - 1, destMidX + 1] is Cell.ShipExitVoid)
-                _cells[destMidY - 1, destMidX + 1] = new Cell.ShipExit();
+            if (_shipLayout != null && _cells[destMidY - 1, destMidX] is Cell.ShipExit)
+                _cells[destMidY - 1, destMidX] = new Cell.ShipVoid();
         }
     }
 }
