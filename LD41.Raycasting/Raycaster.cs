@@ -1,32 +1,22 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using LD41.Gameplay;
+using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace LD41.Raycasting
 {
     static class Raycaster
     {
         public static Color[] Raycast(
-            int[,] mapGrid,
+            Map map,
             Point screenDim,
             Vector2 position,
             Vector2 direction,
             Vector2 plane,
-            Texture2D[] textures,
-            Vector2 spritePos)
+            Dictionary<string, TextureData> textures)
         {
             var buffer = new Color[screenDim.Y, screenDim.X];
-            var textureData = new Color[textures.Length][];
-            int i = 0;
-            foreach (var texture in textures)
-            {
-                textureData[i] = new Color[texture.Width * texture.Height];
-                texture.GetData(textureData[i]);
-                i++;
-            }
-
-            double[] zbuffer = new double[screenDim.X];
-
+            //double[] zbuffer = new double[screenDim.X];
             for (int x = 0; x < screenDim.X; x++)
             {
                 var cameraX = (2 * (x / (float)screenDim.X)) - 1; // where on the plane -1 to 1
@@ -69,7 +59,7 @@ namespace LD41.Raycasting
                         yWallHit = true;
                     }
 
-                    if (mapGrid[mapPos.X, mapPos.Y] > 0)
+                    if (!(map[mapPos.X, mapPos.Y] is Cell.VoidCell))
                         break;
                 }
 
@@ -77,7 +67,7 @@ namespace LD41.Raycasting
                 if (!yWallHit) perpWallDist = (mapPos.X - position.X + (1 - step.X) / 2) / rayDirection.X;
                 else perpWallDist = (mapPos.Y - position.Y + (1 - step.Y) / 2) / rayDirection.Y;
 
-                zbuffer[x] = perpWallDist;
+                //zbuffer[x] = perpWallDist;
 
                 var lineHeight = (int)(screenDim.Y / perpWallDist);
 
@@ -86,9 +76,8 @@ namespace LD41.Raycasting
                 var drawStart = MathHelper.Clamp(midScreen - halfLineHeight, 0, screenDim.Y - 1);
                 var drawEnd = MathHelper.Clamp(midScreen + halfLineHeight, 0, screenDim.Y - 1);
 
-                var texIdx = mapGrid[mapPos.X, mapPos.Y] - 1;
-                var tex = textures[texIdx];
-                var data = textureData[texIdx];
+                var textureName = map[mapPos.X, mapPos.Y].TextureName;
+                var tex = textures[textureName];
 
                 double wallX = 0;
                 if (!yWallHit) wallX = position.Y + (perpWallDist * rayDirection.Y);
@@ -105,8 +94,8 @@ namespace LD41.Raycasting
                 {
                     int d = (y * 256) - (screenDim.Y * 128) + (lineHeight * 128);
                     int texY = ((d * tex.Height) / lineHeight) / 256;
-                    var dataIdx = MathHelper.Clamp((tex.Width * texY) + texX, 0, data.Length - 1);
-                    buffer[y, x] = new Color(data[dataIdx], light);
+                    var dataIdx = MathHelper.Clamp((tex.Width * texY) + texX, 0, tex.Data.Length - 1);
+                    buffer[y, x] = new Color(tex.Data[dataIdx], light);
                 }
 
                 var floorXWall = 0.0;
@@ -142,9 +131,9 @@ namespace LD41.Raycasting
 
                 if (drawEnd < 0) drawEnd = screenDim.Y;
 
-                tex = textures[0];
-                data = textureData[0];
-                var fdata = textureData[5];
+                var point = position.ToPoint();
+                var floorTex = textures[(map[point.X, point.Y] as Cell.VoidCell).TextureName];
+                var ceilTex = textures[(map[point.X, point.Y] as Cell.VoidCell).CeilingTextureName];
 
                 for (int y = drawEnd + 1; y < screenDim.Y; y++)
                 {
@@ -158,14 +147,13 @@ namespace LD41.Raycasting
 
                     var floorTexX = 0;
                     var floorTexY = 0;
-                    floorTexX = (int)(currentFloorX * tex.Width) % tex.Width;
-                    floorTexY = (int)(currentFloorY * tex.Height) % tex.Height;
+                    floorTexX = (int)(currentFloorX * floorTex.Width) % floorTex.Width;
+                    floorTexY = (int)(currentFloorY * floorTex.Height) % floorTex.Height;
 
-                    
-                    var col = new Color(data[tex.Width * floorTexY + floorTexX], light);
+                    var floorColIdx = floorTex.Width * floorTexY + floorTexX;
+                    var col = new Color(floorTex.Data[floorColIdx], light);
                     buffer[y, x] = col;
-
-                    col = new Color(fdata[tex.Width * floorTexY + floorTexX], light);
+                    col = new Color(ceilTex.Data[floorColIdx], light);
                     buffer[screenDim.Y - y, x] = col;
                 }
 

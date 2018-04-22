@@ -9,8 +9,13 @@
     <Import_RootNamespace>LD41.Gameplay</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Asteroids.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cells.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Computer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GameState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Map.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperatingSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ships.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Stations.cs" />
   </ItemGroup>
 </Project>

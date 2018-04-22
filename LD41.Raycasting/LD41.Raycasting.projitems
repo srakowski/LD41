@@ -10,5 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Raycaster.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextureData.cs" />
   </ItemGroup>
 </Project>

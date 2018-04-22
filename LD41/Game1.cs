@@ -1,7 +1,9 @@
-﻿using LD41.Raycasting;
+﻿using LD41.Gameplay;
+using LD41.Raycasting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace LD41
 {
@@ -16,12 +18,16 @@ namespace LD41
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D target;
-        int[,] map;
+        Texture2D compTarget;
+        //int[,] map;
         Vector2 pos = new Vector2(3, 3);
         Vector2 look = new Vector2(-1, 0);
         Vector2 fov = new Vector2(0, 0.66f);
-        Texture2D[] textures;
+        //Texture2D[] textures;
         ViewportAdapter va;
+        GameState gameState;
+        Dictionary<string, Texture2D> textures;
+        Dictionary<string, TextureData> textureDataLookup;
 
         public Game1()
         {
@@ -38,16 +44,16 @@ namespace LD41
         /// </summary>
         protected override void Initialize()
         {
-            map = new int[7, 5]
-            {
-                { 5, 2, 4, 2, 5 },
-                { 2, 2, 0, 2, 5 },
-                { 2, 0, 0, 0, 2 },
-                { 5, 0, 0, 0, 5 },
-                { 2, 0, 0, 0, 2 },
-                { 2, 2, 0, 2, 2 },
-                { 0, 2, 3, 2, 0 },
-            };
+            //map = new int[7, 5]
+            //{
+            //    { 5, 2, 4, 2, 5 },
+            //    { 2, 2, 0, 2, 5 },
+            //    { 2, 0, 0, 0, 2 },
+            //    { 5, 0, 0, 0, 5 },
+            //    { 2, 0, 0, 0, 2 },
+            //    { 2, 2, 0, 2, 2 },
+            //    { 0, 2, 3, 2, 0 },
+            //};
 
             // TODO: Add your initialization logic here
             //map = new int[24, 24]
@@ -96,39 +102,49 @@ namespace LD41
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            textures = new Dictionary<string, Texture2D>();
+            textureDataLookup = new Dictionary<string, TextureData>();
+
+            LoadTexture("ShipFloor", "floor");
+            LoadTexture("ShipCeiling", "ceiling");
+            LoadTexture("ShipWall", "wall");
+            LoadTexture("ShipWindow", "window");
+            LoadTexture("ShipComputer", "todo");
+            LoadTexture("ShipExit", "todo");
+
+            LoadTexture("AsteroidFloor", "todo");
+            LoadTexture("AsteroidCeiling", "todo");
+            LoadTexture("AsteroidEntry", "todo");
+            LoadTexture("AsteroidRock", "todo");
+            LoadTexture("AsteroidResource", "todo");
+            LoadTexture("AsteroidBoundary", "todo");
+
+            LoadTexture("StationFloor", "todo");
+            LoadTexture("StationCeiling", "todo");
+            LoadTexture("StationWall", "todo");
+            LoadTexture("StationComputer");
+            LoadTexture("StationEntry", "todo");
+            LoadTexture("StationBaySign", "todo");
+
+            LoadTexture("Threshold", "todo");
+            LoadTexture("Crosshair", "crosshair");
+            LoadTexture("font");
+
+            gameState = new GameState(new Map(Stations.Starting),
+                new Computer(new Display(textures["font"]), new StationOperatingSystem()));
+
             target = new Texture2D(GraphicsDevice, width, height);
-            var floor = Content.Load<Texture2D>("floor");
-            var wall = Content.Load<Texture2D>("wall");
-            var comp = Content.Load<Texture2D>("comp");
-            var window = Content.Load<Texture2D>("window");
-            var ceiling = Content.Load<Texture2D>("ceiling");
-            var column = Content.Load<Texture2D>("column");
-            textures = new Texture2D[]
-            {
-                floor,
-                wall,
-                floor,
-                comp,
-                window,
-                ceiling,
-                column,
-            };
+            compTarget = new Texture2D(GraphicsDevice,
+                gameState.Computer.Display.Width, gameState.Computer.Display.Height);
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
-        protected override void UnloadContent()
+        private void LoadTexture(string name, string path = null)
         {
-            // TODO: Unload any non ContentManager content here
+            var tex = Content.Load<Texture2D>(path ?? name);
+            textures[name] = tex;
+            textureDataLookup[name] = new TextureData(tex);
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -175,11 +191,11 @@ namespace LD41
             var dy = dv.Y;
 
             var np = new Vector2(newPos.X + (dx > 0 ? -0.6f : dx < 0 ? 0.6f : 0f), pos.Y).ToPoint();
-            if (map[np.X, np.Y] == 0)
+            if (gameState.Map[np.X, np.Y] is Cell.VoidCell)
                 pos.X = newPos.X;
 
             np = new Vector2(pos.X, newPos.Y + (dy > 0 ? -0.6f : dy < 0 ? 0.6f : 0f)).ToPoint();
-            if (map[np.X, np.Y] == 0)
+            if (gameState.Map[np.X, np.Y] is Cell.VoidCell)
                 pos.Y = newPos.Y;
         }
 
@@ -194,20 +210,49 @@ namespace LD41
         {
             GraphicsDevice.Clear(Color.Black);
 
+            gameState.Computer.Display.RenderTo(compTarget);
+
+            var cpixels = new Color[compTarget.Width * compTarget.Height];
+            compTarget.GetData(cpixels);
+
+            var tex = textures["StationComputer"];
+            var pixels = new Color[tex.Width * tex.Height];
+            tex.GetData(pixels);
+            int j = 0;
+            for (int p = 0; p < pixels.Length && j < cpixels.Length; p++)
+                if (pixels[p] == Color.Magenta)
+                    pixels[p] = cpixels[j++];
+            tex.SetData(pixels);
+            textureDataLookup["StationComputer"] = new TextureData(tex);
+
             var data = Raycaster.Raycast(
-                map,
+                gameState.Map,
                 new Point(width, height),
                 pos,
                 look,
                 fov,
-                textures,
-                new Vector2(3, 9));
+                textureDataLookup);
 
             target.SetData(data);
 
-            spriteBatch.Begin(blendState: BlendState.NonPremultiplied, transformMatrix: va.GetScaleMatrix());
+            spriteBatch.Begin(blendState: BlendState.NonPremultiplied, 
+                samplerState: SamplerState.PointWrap,
+                transformMatrix: va.GetScaleMatrix());
             spriteBatch.Draw(target, Vector2.Zero, Color.White);
             spriteBatch.End();
+
+            //var crosshair = textures["Crosshair"];
+            //spriteBatch.Draw(crosshair,
+            //    new Vector2(width * 0.5f, height * 0.5f),
+            //    null,
+            //    new Color(Color.White, 0.5f),
+            //    0f,
+            //    new Vector2(crosshair.Width * 0.5f, crosshair.Height * 0.5f),
+            //    1f,
+            //    SpriteEffects.None,
+            //    0f);
+
+
 
             base.Draw(gameTime);
         }
