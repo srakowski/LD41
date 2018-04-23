@@ -230,41 +230,6 @@ namespace LD41.Raycasting
 
             }
 
-            //// SPRITE
-            //Vector2 relSpritePos = spritePos - position;
-            //double invDet = 1.0 / (plane.X * direction.Y - direction.X * plane.Y);
-            //double transformX = invDet * (direction.Y * relSpritePos.X - direction.X * relSpritePos.Y);
-            //double transformY = invDet * (-plane.Y * relSpritePos.X + plane.X * relSpritePos.Y);
-
-            //int spriteScreenX = (int)((screenDim.X / 2) * (1 + transformX / transformY));
-
-            //int spriteHeight = Math.Abs((int)(screenDim.Y / (transformY)));
-
-            //int drawStartY = MathHelper.Clamp(-spriteHeight / 2 + screenDim.Y / 2, 0, screenDim.Y - 1);
-            //int drawEndY = MathHelper.Clamp(spriteHeight / 2 + screenDim.Y / 2, 0, screenDim.Y - 1);
-
-            ////calculate width of the sprite
-            //int spriteWidth = Math.Abs((int)(screenDim.Y / (transformY)));
-            //int drawStartX = MathHelper.Clamp(-spriteWidth / 2 + spriteScreenX, 0, screenDim.X - 1);
-            //int drawEndX = MathHelper.Clamp(spriteWidth / 2 + spriteScreenX, 0, screenDim.X - 1);
-
-            //var tex2 = textures[6];
-            //var tData = textureData[6];
-
-            ////loop through every vertical stripe of the sprite on screen
-            //for (int stripe = drawStartX; stripe < drawEndX; stripe++)
-            //{
-            //    int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * tex2.Width / spriteWidth) / 256;
-            //    if (transformY > 0 && stripe > 0 && stripe < screenDim.X && transformY < zbuffer[stripe])
-            //        for (int y = drawStartY; y < drawEndY; y++)
-            //        {
-            //            int d = (y) * 256 - screenDim.Y * 128 + spriteHeight * 128;
-            //            int texY = ((d * tex2.Height) / spriteHeight) / 256;
-            //            var color = tData[tex2.Width * texY + texX];
-            //            if (color.A != 0)
-            //                buffer[y, stripe] = color;
-            //        }
-            //}
 
             var pixels = new Color[buffer.Length];
             var p = 0;
@@ -274,6 +239,6 @@ namespace LD41.Raycasting
             return pixels;
         }
 
-        private static double Light(double currentDist) => 1.0 / (currentDist);
+        private static double Light(double currentDist) => 1.0 / (currentDist / 2f);
     }
 }

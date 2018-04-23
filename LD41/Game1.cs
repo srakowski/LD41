@@ -1,6 +1,7 @@
 ﻿using LD41.Gameplay;
 using LD41.Raycasting;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -78,16 +79,17 @@ namespace LD41
             LoadTexture("font");
 
             hudFont = Content.Load<SpriteFont>("HudFont");
+            Sfx.Confirm = Content.Load<SoundEffect>("confirm");
+            Sfx.Select = Content.Load<SoundEffect>("select");
+            Sfx.Reject = Content.Load<SoundEffect>("reject");
 
-            var station = new Station(new Computer(new Display(textures["font"])));
-            var map = new Map(null, station.GetLayout());
+            Display.FontTexture = textures["font"];
+
+            var map = new Map(null, null);
 
             gameState = new GameState(screenDim,
                 map,
-                station,
-                new Player(new Vector2((map.Width / 2) + 0.5f, (map.Height *0.5f) + 3)),
-                new Asteroid()
-            );
+                new Player(new Vector2((map.Width / 2) + 0.5f, (map.Height *0.5f) + 3)));
 
             target = new Texture2D(GraphicsDevice, width, height);
         }
@@ -107,7 +109,7 @@ namespace LD41
 
             gameState.Player.Update(gameState, delta);
             gameState.Player.Ship.Computer?.Update(delta);
-            gameState.Station.Computer.Update(delta);
+            gameState.ActiveEnvironment.Update(delta);
         }
 
         private static float deltaTime(GameTime gameTime) =>
@@ -133,7 +135,7 @@ namespace LD41
             target.SetData(data);
 
             spriteBatch.Begin(blendState: BlendState.NonPremultiplied,
-                samplerState: SamplerState.PointWrap,
+                samplerState: SamplerState.PointClamp,
                 transformMatrix: va.GetScaleMatrix());
             spriteBatch.Draw(target, Vector2.Zero, Color.White);
             spriteBatch.End();
@@ -165,8 +167,11 @@ namespace LD41
             base.Draw(gameTime);
         }
 
-        private void UpdateStationComputerTexture() =>
-            UpdateComputerTexture(gameState.Station.Computer, "StationComputer");
+        private void UpdateStationComputerTexture()
+        {
+            if (gameState.ActiveEnvironment is Station station)
+                UpdateComputerTexture(station.Computer, "StationComputer");
+        }
 
         private void UpdateShipComputerTexture()
         {

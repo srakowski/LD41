@@ -8,9 +8,9 @@ namespace LD41.Gameplay
     {
         private OperatingSystem _os;
 
-        public Computer(Display display)
+        public Computer()
         {
-            Display = display;
+            Display = new Display(); 
         }
 
         public GameState GameState { get; set; }
@@ -38,13 +38,15 @@ namespace LD41.Gameplay
 
     class Display
     {
+        public static Texture2D FontTexture { get; set; }
+
         private const int CHAR_DIM = 8;
         private Color[,] _pixels;
         private char[,] _charBuffer;
         private Point _cursorPos;
         private Color[] _fontData;
 
-        public Display(Texture2D fontTexture)
+        public Display()
         {
             CharWidth = 24;
             Width = CharWidth * CHAR_DIM;
@@ -52,13 +54,10 @@ namespace LD41.Gameplay
             Height = CharHeight * CHAR_DIM;
             _pixels = new Color[CharHeight * CHAR_DIM, CharWidth * CHAR_DIM];
             _charBuffer = new char[CharHeight, CharWidth];
-            FontTexture = fontTexture;
             _fontData = new Color[FontTexture.Width * FontTexture.Height];
             FontTexture.GetData(_fontData);
             Clear();
         }
-
-        public Texture2D FontTexture { get; }
 
         public int Width { get; }
         public int Height { get; }

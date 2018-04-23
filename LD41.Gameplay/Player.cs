@@ -12,7 +12,7 @@ namespace LD41.Gameplay
         Vector2 fov = new Vector2(0, 0.66f);
         PlayerState state = new PlayerFreeMove();
         PlayerState interact = null;
-        int _credits = 16000;
+        int _credits = 5000;
         Ship _ship = new NoShip();
 
         public Player(Vector2 pos)
@@ -66,7 +66,7 @@ namespace LD41.Gameplay
                     if (lookingAt.Cell is Cell.ComputerCell)
                     {
                         if (lookingAt.Cell is Cell.StationComputer)
-                            player.interact = new PlayerComputerInteract(gameState.Station.Computer);
+                            player.interact = new PlayerComputerInteract((gameState.ActiveEnvironment as Station).Computer);
                         else if (lookingAt.Cell is Cell.ShipComputer)
                             player.interact = new PlayerComputerInteract(gameState.Player.Ship.Computer);
                     }
@@ -74,7 +74,12 @@ namespace LD41.Gameplay
                     {
                         if (kb.IsKeyDown(Keys.Space))
                         {
-                            gameState.Asteroid.Mine(mineable);
+                            (gameState.ActiveEnvironment as Asteroid).Mine(mineable);
+                            if (player.Ship.HasCargoCapacity)
+                            {
+                                if (lookingAt.Cell is Cell.AsteroidRock) player.Ship.CargoHold.Ore.Quantity += 1;
+                                if (lookingAt.Cell is Cell.AsteroidResource) player.Ship.CargoHold.Ore.Quantity += 1;
+                            }
                         }
                     }
                 }
@@ -167,5 +172,14 @@ namespace LD41.Gameplay
             if (Ship.Computer != null)
                 Ship.Computer.GameState = _gameState;
         }
+
+        internal void Buy(Good good)
+        {
+            if (!CanAfford(good.Price)) return;
+            _credits -= good.Price;
+            Ship.AddInventory(good);
+        }
+
+        public void Credit(int price) => _credits += price;
     }
 }
