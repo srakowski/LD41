@@ -365,9 +365,9 @@ namespace LD41.Gameplay
             {
                 Sfx.Confirm.Play();
                 PopModule();
-                PushModule(SellInvantory());
                 Player.Ship.RemoveInventory(cargo.Type);
                 Player.Credit(price);
+                PushModule(SellInvantory());
                 return new Msg(this,
                     Lns("Transaction Complete",
                     $"Sold: {cargo.Name}",
