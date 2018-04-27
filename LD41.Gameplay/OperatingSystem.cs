@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LD41.PV8SDK;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,6 +157,44 @@ namespace LD41.Gameplay
         public void Update(float delta) { }
     }
 
+    class PV8Module : OSModule
+    {
+        private PixelVisionRunnerAdapter runner;
+        private Computer computer;
+        private int width;
+        private string prog;
+        private int height;
+
+        public PV8Module(OperatingSystem os, string prog, int width, int height)
+        {
+            computer = os.Computer;
+            this.width = width;
+            this.prog = prog;
+            this.height = height;
+        }
+
+            public void Activate()
+        {
+            runner = new PixelVisionRunnerAdapter(Game1.GraphicsDeviceInstance, prog);
+        }
+
+        public void Enter()
+        {
+            this.computer.OS.PopModule();
+        }
+
+        public void Select(int num)
+        {
+        }
+
+        public void Update(float delta)
+        {
+            runner.Update(delta);
+            var pixels =  runner.Draw();
+            computer.Display.Draw(pixels, width, height);
+        }
+    }
+
     class ProcRun : OSModule
     {
         private string _procName;
@@ -225,10 +264,21 @@ namespace LD41.Gameplay
                 .AddOpt("Ship Inventory", () => PushModule(Inventory()))
                 .AddOpt("Sell", () => PushModule(SellInvantory()))
                 .AddOpt("Buy Tradeable Goods", () => PushModule(BuyGoods()))
-                .AddOpt("Buy Ship", () => PushModule(BuyShip()));
+                .AddOpt("Buy Ship", () => PushModule(BuyShip()))
+                .AddOpt("PV8", () => PushModule(PV8()));
 
             return mnu; 
                 
+        }
+
+        private OSModule PV8()
+        {
+
+            var mnu = new Mnu(this, "Main Menu")
+                .AddOpt("MicroPlatformer", () => PushModule(new PV8Module(this, "MicroPlatformer", 128, 128)))
+                .AddOpt("Sprite Tests", () => PushModule(new PV8Module(this, "test", 256, 240)));
+
+            return mnu;
         }
 
         private OSModule Inventory()
@@ -510,6 +560,7 @@ namespace LD41.Gameplay
     station.Position);
             distance = (float)Math.Round(distance, 2);
 
+            Sfx.Confirm.Play();
             GameState.Map.SetEnvLayout(null);
             PopModule();
             PopModule();

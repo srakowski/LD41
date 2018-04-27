@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LD41", "LD41\LD41.csproj", "{8D164926-DBA1-4C42-8190-B6EEB0DF0EF9}"
 EndProject
@@ -9,11 +9,19 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LD41.Raycasting", "LD41.Ray
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LD41.Gameplay", "LD41.Gameplay\LD41.Gameplay.shproj", "{098FB9FA-7B61-40D8-BB6C-5B5F4BEC4F71}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "PV8SDK", "PV8SDK\PV8SDK.shproj", "{504A3FF0-2C79-46C2-8EA3-FFC49525CBC5}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "LD41.PV8SDK", "LD41.PV8SDK\LD41.PV8SDK.shproj", "{641824EF-4D58-43FA-88B6-E3B8DC8D882C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		LD41.Gameplay\LD41.Gameplay.projitems*{098fb9fa-7b61-40d8-bb6c-5b5f4bec4f71}*SharedItemsImports = 13
+		PV8SDK\PV8SDK.projitems*{504a3ff0-2c79-46c2-8ea3-ffc49525cbc5}*SharedItemsImports = 13
+		LD41.PV8SDK\LD41.PV8SDK.projitems*{641824ef-4d58-43fa-88b6-e3b8dc8d882c}*SharedItemsImports = 13
 		LD41.Gameplay\LD41.Gameplay.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
+		LD41.PV8SDK\LD41.PV8SDK.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
 		LD41.Raycasting\LD41.Raycasting.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
+		PV8SDK\PV8SDK.projitems*{8d164926-dba1-4c42-8190-b6eeb0df0ef9}*SharedItemsImports = 4
 		LD41.Raycasting\LD41.Raycasting.projitems*{cc3e70df-5351-453d-af0c-10a4239a59dc}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

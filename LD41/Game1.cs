@@ -1,4 +1,5 @@
 ﻿using LD41.Gameplay;
+using LD41.PV8SDK;
 using LD41.Raycasting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -16,6 +17,8 @@ namespace LD41
         const int width = 400;
         const int height = 300;
 
+        public static GraphicsDevice GraphicsDeviceInstance { get; set; }
+
         Point screenDim = new Point(width, height);
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -26,6 +29,7 @@ namespace LD41
         Dictionary<string, TextureData> textureDataLookup;
         SpriteFont hudFont;
         RaycasterTarget lookingAt;
+        //PixelVisionRunnerAdapter testrunner;
 
         public Game1()
         {
@@ -42,6 +46,9 @@ namespace LD41
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
+
+            GraphicsDeviceInstance = this.GraphicsDevice;
+            //testrunner = new PixelVisionRunnerAdapter(this.GraphicsDevice);
         }
 
         protected override void LoadContent()
@@ -110,6 +117,8 @@ namespace LD41
             gameState.Player.Update(gameState, delta);
             gameState.Player.Ship.Computer?.Update(delta);
             gameState.ActiveEnvironment.Update(delta);
+
+            //testrunner.Update(delta);
         }
 
         private static float deltaTime(GameTime gameTime) =>
@@ -122,6 +131,15 @@ namespace LD41
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+
+            //var p2 = new Color[192 * 128];
+            //var pixels = testrunner.Draw();
+            //for (int y = 0; y < 128; y++)
+            //    for (int x = 0; x < 128; x++)
+            //    {
+            //        p2[(y * 192) + x] = pixels[(y * 128) + x];
+            //    }
+            //RenderToVirtualScreen("StationComputer", p2);
 
             UpdateStationComputerTexture();
             UpdateShipComputerTexture();
@@ -182,6 +200,11 @@ namespace LD41
         private void UpdateComputerTexture(Computer computer, string texture)
         {
             var cpixels = computer.Display.Render();
+            RenderToVirtualScreen(texture, cpixels);
+        }
+
+        private void RenderToVirtualScreen(string texture, Color[] cpixels)
+        {
             var tex = textures[texture];
             var pixels = new Color[tex.Width * tex.Height];
             tex.GetData(pixels);

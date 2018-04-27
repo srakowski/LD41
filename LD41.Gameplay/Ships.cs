@@ -128,7 +128,7 @@ namespace LD41.Gameplay
             {' ',' ',' ',':','+',':',' ',' ',' ',},
         };
 
-        public MediumUtilityShip() : base(9000, "Med Utility", 12)
+        public MediumUtilityShip() : base(1000, "Med Utility", 12)
         {
         }
 

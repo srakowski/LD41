@@ -45,6 +45,7 @@ namespace LD41.Gameplay
         private char[,] _charBuffer;
         private Point _cursorPos;
         private Color[] _fontData;
+        private Action _onRender;
 
         public Display()
         {
@@ -134,11 +135,27 @@ namespace LD41.Gameplay
 
         internal Color[] Render()
         {
+            _onRender?.Invoke();
+            _onRender = null;
+
             var pixels = new Color[_pixels.Length];
             var p = 0;
             foreach (var color in _pixels)
                 pixels[p++] = color;
             return pixels;
+        }
+
+        internal void Draw(Color[] pixels, int w, int h)
+        {
+            _onRender = () =>
+            {
+                Clear();
+                for (int y = 0; y < h && y < 128; y++)
+                    for (int x = 0; x < w && x < 192; x++)
+                    {
+                        _pixels[y, x] = pixels[(y * w) + x];
+                    }
+            };
         }
     }
 }
